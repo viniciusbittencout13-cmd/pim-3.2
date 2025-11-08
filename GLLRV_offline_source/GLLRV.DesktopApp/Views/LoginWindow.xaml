@@ -1,0 +1,23 @@
+
+<Window x:Class="GLLRV.DesktopApp.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="GLLRV - Login" Height="360" Width="420" WindowStartupLocation="CenterScreen">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="LOGIN" FontSize="20" FontWeight="Bold" Margin="0,0,0,16"/>
+        <StackPanel Grid.Row="1" Orientation="Vertical">
+            <TextBlock Text="Usuário" />
+            <TextBox x:Name="UserNameBox" Margin="0,4,0,8"/>
+            <TextBlock Text="Senha" />
+            <PasswordBox x:Name="PasswordBox" Margin="0,4,0,8"/>
+            <Button Content="Entrar" Height="36" Click="Entrar_Click"/>
+        </StackPanel>
+        <TextBlock Grid.Row="2" Text="Modo Offline (JSON local)" HorizontalAlignment="Center" Margin="0,12,0,0" Foreground="Gray"/>
+    </Grid>
+</Window>
