@@ -8,7 +8,7 @@
             <ColumnDefinition Width="240"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Background="#111827" Padding="16" Spacing="8">
+       <StackPanel Background="#111827" Margin="16">
             <TextBlock Text="GLLRV" Foreground="White" FontSize="22" FontWeight="Bold" Margin="0,0,0,12"/>
             <Button Content="Chamados" Click="Chamados_Click" Margin="0,4" />
             <Button Content="Sair" Click="Sair_Click" Margin="0,4" />
