@@ -23,10 +23,6 @@ namespace GLLRV.DesktopApp.Services
             WriteIndented = true
         };
 
-        /// <summary>
-        /// Garante que o arquivo usuarios.json exista
-        /// e cria o usuário padrão vinicius/admin se estiver vazio.
-        /// </summary>
         public static void EnsureSeedUser()
         {
             Directory.CreateDirectory(UsersDir);
@@ -51,7 +47,7 @@ namespace GLLRV.DesktopApp.Services
 
         public static List<Usuario> Load()
         {
-            EnsureSeedUser(); // garante que existe antes de ler
+            EnsureSeedUser();
 
             var json = File.ReadAllText(UsersFile);
             var users = JsonSerializer.Deserialize<List<Usuario>>(json, JsonOptions)
@@ -68,9 +64,6 @@ namespace GLLRV.DesktopApp.Services
             File.WriteAllText(UsersFile, json);
         }
 
-        /// <summary>
-        /// Procura usuário pelo nome + senha em texto plano (convertida pra SHA256 aqui).
-        /// </summary>
         public static Usuario? Find(string username, string passwordPlain)
         {
             var users = Load();
@@ -81,9 +74,6 @@ namespace GLLRV.DesktopApp.Services
                 && u.Senha == hash);
         }
 
-        /// <summary>
-        /// Atualiza ou adiciona usuário (usado no primeiro acesso, alterar senha etc.)
-        /// </summary>
         public static void Update(Usuario user)
         {
             var users = Load();
@@ -105,6 +95,12 @@ namespace GLLRV.DesktopApp.Services
             }
 
             Save(users);
+        }
+
+        // <- ESSA PARTE É O QUE FALTAVA
+        public static void UpdateUser(Usuario user)
+        {
+            Update(user);
         }
     }
 }
