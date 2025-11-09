@@ -1,134 +1,27 @@
 using System.Windows;
-using System.Windows.Controls;
+using GLLRV.DesktopApp.Models;
 
-namespace GLLRV.DesktopApp.Views
+namespace GLLRV.DesktopApp
 {
     public partial class MainWindow : Window
     {
+        private readonly Usuario? _usuario;
+
         public MainWindow()
         {
             InitializeComponent();
-            // Já inicia na aba de Chamados Pendentes
-            ChamadosPendentesButton_Click(null, null);
         }
 
-        private void SetPage(UIElement conteudo)
+        public MainWindow(Usuario usuario) : this()
         {
-            ContentArea.Children.Clear();
-            ContentArea.Children.Add(conteudo);
-        }
+            _usuario = usuario;
 
-        private void UsuariosButton_Click(object sender, RoutedEventArgs e)
-        {
-            var panel = new StackPanel();
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Usuários",
-                FontSize = 22,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 12)
-            });
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Área de cadastro e edição de usuários (modo offline).",
-                FontSize = 14
-            });
-            SetPage(panel);
-        }
-
-        private void RelatoriosButton_Click(object sender, RoutedEventArgs e)
-        {
-            var panel = new StackPanel();
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Relatórios",
-                FontSize = 22,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 12)
-            });
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Relatórios de desempenho e avaliação dos atendimentos.",
-                FontSize = 14
-            });
-            SetPage(panel);
-        }
-
-        private void ChamadosPendentesButton_Click(object sender, RoutedEventArgs e)
-        {
-            var panel = new StackPanel();
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Chamados Pendentes",
-                FontSize = 22,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 12)
-            });
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Lista de chamados que ainda não foram atendidos.",
-                FontSize = 14
-            });
-            SetPage(panel);
-        }
-
-        private void HistoricoChamadosButton_Click(object sender, RoutedEventArgs e)
-        {
-            var panel = new StackPanel();
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Histórico de Chamados",
-                FontSize = 22,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 12)
-            });
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Chamados finalizados e arquivados.",
-                FontSize = 14
-            });
-            SetPage(panel);
-        }
-
-        private void ChamadosAndamentoButton_Click(object sender, RoutedEventArgs e)
-        {
-            var panel = new StackPanel();
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Chamados em Andamento",
-                FontSize = 22,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 12)
-            });
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Chamados atualmente sendo atendidos.",
-                FontSize = 14
-            });
-            SetPage(panel);
-        }
-
-        private void ConfiguracaoButton_Click(object sender, RoutedEventArgs e)
-        {
-            var panel = new StackPanel();
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Configurações",
-                FontSize = 22,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 12)
-            });
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Preferências do sistema e dados do usuário logado.",
-                FontSize = 14
-            });
-            SetPage(panel);
-        }
-
-        private void SairButton_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
+            // Se você tiver labels no XAML para mostrar os dados,
+            // pode usar algo assim (só se os controles existirem):
+            //
+            // NomeTecnicoLabel.Content = _usuario.Nome;
+            // NivelTecnicoLabel.Content = $"TÉCNICO :  NÍVEL {_usuario.NivelTecnico}";
+            // CategoriaLabel.Content   = $"CATEGORIA: {_usuario.Categoria}";
         }
     }
 }
