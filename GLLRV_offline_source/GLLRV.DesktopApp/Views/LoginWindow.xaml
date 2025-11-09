@@ -146,7 +146,7 @@
                        Foreground="#444"
                        FontSize="13"/>
 
-            <Button Content="SAIR"
+            <border Content="SAIR"
                     Width="120"
                     Height="40"
                     Click="SairButton_Click"
