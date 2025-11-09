@@ -11,7 +11,7 @@ namespace GLLRV.DesktopApp
             base.OnStartup(e);
 
             // Gera data/usuarios/usuarios.json com usuário padrão, se não existir
-            JsonUserStore.EnsureSeedUser();
+            new JsonUserStore().EnsureSeedUser();
 
             // Abre tela de login em vez de cair direto no sistema
             var login = new LoginWindow();
