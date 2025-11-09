@@ -6,33 +6,27 @@
         Width="800"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
-
     <Grid Background="#FFF0F4F8">
         <StackPanel Margin="0,80,0,0"
                     HorizontalAlignment="Center"
                     Width="400">
-
             <TextBlock Text="Seja Bem Vindo!"
                        FontSize="26"
                        FontWeight="Bold"
                        HorizontalAlignment="Center"
                        Margin="0,0,0,16" />
-
             <TextBlock Text="Digite uma frase de segurança" />
             <TextBox x:Name="SecurityPhraseTextBox"
                      Height="32"
                      Margin="0,4,0,16" />
-
             <TextBlock Text="Nova senha" />
             <PasswordBox x:Name="NewPasswordBox"
                          Height="32"
                          Margin="0,4,0,8" />
-
             <TextBlock Text="Repita a nova senha" />
             <PasswordBox x:Name="ConfirmPasswordBox"
                          Height="32"
                          Margin="0,4,0,24" />
-
             <Button x:Name="ConfirmButton"
                     Content="CONFIRMAR"
                     Height="40"
