@@ -15,34 +15,38 @@ namespace GLLRV.DesktopApp.Views
             _usuario = usuario;
         }
 
-        private void ConfirmarButton_Click(object sender, RoutedEventArgs e)
+        private void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
             var frase = SecurityPhraseTextBox.Text.Trim();
-            var novaSenha = NewPasswordBox.Password;
-            var repetir = ConfirmPasswordBox.Password;
+            var novaSenha = NewPasswordBox.Password.Trim();
+            var confirma = ConfirmPasswordBox.Password.Trim();
 
-            if (string.IsNullOrWhiteSpace(frase) ||
-                string.IsNullOrWhiteSpace(novaSenha) ||
-                string.IsNullOrWhiteSpace(repetir))
+            if (string.IsNullOrWhiteSpace(frase))
             {
-                MessageBox.Show("Preencha todos os campos.", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Informe uma frase de segurança.");
                 return;
             }
 
-            if (novaSenha != repetir)
+            if (string.IsNullOrWhiteSpace(novaSenha))
             {
-                MessageBox.Show("As senhas não conferem.", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Informe a nova senha.");
                 return;
             }
 
-            _usuario.Senha = novaSenha;          // direto, sem hash
+            if (novaSenha != confirma)
+            {
+                MessageBox.Show("As senhas não conferem.");
+                return;
+            }
+
+            _usuario.Senha = novaSenha;
             _usuario.FraseSeguranca = frase;
             _usuario.PrimeiroAcesso = false;
 
-            Auth.AtualizarUsuario(_usuario);
+            JsonUserStore.UpdateUser(_usuario);
 
-            var main = new MainWindow(_usuario);
-            main.Show();
+            MessageBox.Show("Dados atualizados com sucesso.");
+            DialogResult = true;
             Close();
         }
     }
