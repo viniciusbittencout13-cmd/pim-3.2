@@ -15,6 +15,7 @@ namespace GLLRV.DesktopApp.Services
         private static string UsersFile =>
             Path.Combine(DataFolder, "usuarios.json");
 
+        // Carrega usuários do JSON (ou cria usuário padrão)
         public static List<Usuario> Load()
         {
             try
@@ -32,7 +33,8 @@ namespace GLLRV.DesktopApp.Services
                             Senha = "123",
                             Nivel = 2,
                             Atribuicoes = "Servidores e gerenciamento de rede",
-                            PrimeiroAcesso = true
+                            PrimeiroAcesso = true,
+                            FraseSeguranca = ""
                         }
                     };
 
@@ -49,6 +51,10 @@ namespace GLLRV.DesktopApp.Services
                 return new List<Usuario>();
             }
         }
+
+        // Alias p/ manter compatibilidade com outros arquivos
+        public static List<Usuario> LoadUsers() => Load();
+        public static List<Usuario> Loadusers() => Load(); // se em algum lugar estiver com "Loadusers"
 
         public static void Save(List<Usuario> usuarios)
         {
@@ -69,6 +75,30 @@ namespace GLLRV.DesktopApp.Services
             return users.FirstOrDefault(u =>
                 string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase)
                 && u.Senha == senha);
+        }
+
+        public static Usuario? FindByUsername(string username)
+        {
+            var users = Load();
+
+            return users.FirstOrDefault(u =>
+                string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // Usado pelo FirstAccess / atualização de dados
+        public static void UpdateUser(Usuario user)
+        {
+            var users = Load();
+
+            var idx = users.FindIndex(u =>
+                u.Username.Equals(user.Username, StringComparison.OrdinalIgnoreCase));
+
+            if (idx >= 0)
+                users[idx] = user;
+            else
+                users.Add(user);
+
+            Save(users);
         }
     }
 }
