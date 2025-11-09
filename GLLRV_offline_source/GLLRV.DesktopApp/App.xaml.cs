@@ -4,7 +4,7 @@ using System.Windows;
 using Microsoft.Extensions.Configuration;
 using GLLRV.DesktopApp.Services;
 using GLLRV.DesktopApp.Models;
-using GLLRV.DesktopApp.Views; // <-- importante para enxergar MainWindow
+using GLLRV.DesktopApp.Views;
 
 namespace GLLRV.DesktopApp
 {
@@ -21,7 +21,7 @@ namespace GLLRV.DesktopApp
 
                 var basePath = AppContext.BaseDirectory;
 
-                // Garante appsettings.json
+                // Garante appsettings.json básico
                 var appSettingsPath = Path.Combine(basePath, "appsettings.json");
                 if (!File.Exists(appSettingsPath))
                 {
@@ -42,25 +42,27 @@ namespace GLLRV.DesktopApp
                 var fullDataPath = Path.Combine(basePath, dataFolder);
                 Directory.CreateDirectory(fullDataPath);
 
-                // Garante usuario admin/admin
+                // Cria usuário padrão: VINICIUS BITTENCOURT (nível 2, Servidores / Rede)
                 var usuariosPath = Path.Combine(fullDataPath, "usuarios.json");
                 if (!File.Exists(usuariosPath))
                 {
-                    var admin = new Usuario
+                    var vinicius = new Usuario
                     {
                         UsuarioID = 1,
-                        Nome = "Administrador",
-                        NomeUsuario = "admin",
+                        Nome = "Vinicius Bittencourt",
+                        NomeUsuario = "vinicius",
+                        // senha padrão: admin
                         SenhaSha256Hex = Auth.Sha256Hex("admin"),
                         EhTecnico = true,
-                        NivelTecnico = 3,
-                        NivelPermissao = 3,
-                        Email = "admin@gllrv.local",
+                        NivelTecnico = 2,
+                        NivelPermissao = 2,
+                        Categoria = "Servidores / Gerenciamento de Rede",
+                        Email = "vinicius@gllrv.local",
                         Telefone = "(11) 99999-0001"
                     };
 
                     var json = System.Text.Json.JsonSerializer.Serialize(
-                        new[] { admin },
+                        new[] { vinicius },
                         new System.Text.Json.JsonSerializerOptions
                         {
                             WriteIndented = true,
@@ -70,10 +72,11 @@ namespace GLLRV.DesktopApp
                     File.WriteAllText(usuariosPath, json);
                 }
 
+                // DataStore JSON offline
                 DataStore = new JsonDataStore(fullDataPath);
 
-                // ABRE A JANELA PRINCIPAL
-                var main = new MainWindow();   // essa janela já existe no projeto
+                // Abre janela principal (já começa em Chamados Pendentes pelo MainWindow)
+                var main = new MainWindow();
                 MainWindow = main;
                 main.Show();
             }
