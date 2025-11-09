@@ -6,46 +6,39 @@ namespace GLLRV.DesktopApp.Views
 {
     public partial class FirstAccessWindow : Window
     {
-        private readonly Usuario _usuario;
+        private readonly Usuario _user;
 
-        public FirstAccessWindow(Usuario usuario)
+        public FirstAccessWindow(Usuario user)
         {
             InitializeComponent();
-            _usuario = usuario;
+            _user = user;
         }
 
-        private void ConfirmButton_Click(object sender, RoutedEventArgs e)
+        private void ConfirmarButton_Click(object sender, RoutedEventArgs e)
         {
-            var frase = SecurityPhraseTextBox.Text.Trim();
-            var novaSenha = NewPasswordBox.Password;
-            var repeteSenha = ConfirmPasswordBox.Password;
+            var frase = SecurityPhraseTextBox.Text?.Trim() ?? "";
+            var senha1 = NewPasswordBox.Password;
+            var senha2 = ConfirmPasswordBox.Password;
 
-            if (string.IsNullOrWhiteSpace(frase) ||
-                string.IsNullOrWhiteSpace(novaSenha) ||
-                string.IsNullOrWhiteSpace(repeteSenha))
+            if (string.IsNullOrWhiteSpace(senha1))
             {
-                MessageBox.Show("Preencha todos os campos.", "Aviso",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Informe a nova senha.");
                 return;
             }
 
-            if (novaSenha != repeteSenha)
+            if (senha1 != senha2)
             {
-                MessageBox.Show("As senhas não coincidem.", "Erro",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("As senhas não conferem.");
                 return;
             }
 
-            _usuario.FraseSeguranca = frase;
-            _usuario.Senha = novaSenha;
-            _usuario.PrimeiroAcesso = false;
+            _user.Senha = Auth.Sha256Hex(senha1);
+            _user.PrimeiroAcesso = false;
+            _user.FraseSeguranca = frase;
 
-            JsonUserStore.UpdateUser(_usuario);
+            JsonUserStore.UpdateUser(_user);
 
-            MessageBox.Show("Senha atualizada com sucesso.", "Informação",
-                MessageBoxButton.OK, MessageBoxImage.Information);
-
-            var main = new MainWindow(_usuario);
+            var main = new MainWindow();
             main.Show();
             Close();
         }
