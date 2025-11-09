@@ -6,30 +6,13 @@ namespace GLLRV.DesktopApp.Services
 {
     public static class Auth
     {
-        public static Usuario? Login(string username, string password)
+        public static Usuario Login(string username, string senha)
         {
-            var usuarios = JsonUserStore.LoadAll();
+            var usuarios = JsonUserStore.LoadUsers();
 
-            // compara username sem case, senha igual
-            var usuario = usuarios.FirstOrDefault(u =>
-                string.Equals(u.NomeUsuario, username, StringComparison.OrdinalIgnoreCase) &&
-                u.Senha == password);
-
-            return usuario;
-        }
-
-        public static void AtualizarUsuario(Usuario usuarioAtualizado)
-        {
-            var usuarios = JsonUserStore.LoadAll();
-
-            var idx = usuarios.FindIndex(u =>
-                string.Equals(u.NomeUsuario, usuarioAtualizado.NomeUsuario, StringComparison.OrdinalIgnoreCase));
-
-            if (idx >= 0)
-            {
-                usuarios[idx] = usuarioAtualizado;
-                JsonUserStore.SaveAll(usuarios);
-            }
+            return usuarios.FirstOrDefault(u =>
+                u.NomeUsuario.Equals(username, StringComparison.OrdinalIgnoreCase)
+                && u.Senha == senha);
         }
     }
 }
