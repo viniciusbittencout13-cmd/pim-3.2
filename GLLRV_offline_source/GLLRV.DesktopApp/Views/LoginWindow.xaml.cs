@@ -1,29 +1,45 @@
-private void LoginButton_Click(object sender, RoutedEventArgs e)
+using System;
+using System.Windows;
+using GLLRV.DesktopApp.Services;
+using GLLRV.DesktopApp.Models;
+
+namespace GLLRV.DesktopApp.Views
 {
-    var username = UsernameTextBox.Text.Trim();
-    var senha = PasswordBox.Password;
-
-    var usuario = Auth.Login(username, senha);
-
-    if (usuario == null)
+    public partial class LoginWindow : Window
     {
-        MessageBox.Show("Usuário não encontrado ou senha incorreta.",
-            "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
-        return;
-    }
-
-    if (usuario.PrimeiroAcesso)
-    {
-        var first = new FirstAccessWindow(usuario)
+        public LoginWindow()
         {
-            Owner = this
-        };
-        first.Show();
-        this.Hide();
-        return;
-    }
+            InitializeComponent();
+        }
 
-    var main = new MainWindow(usuario);
-    main.Show();
-    this.Close();
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            var username = UsernameTextBox.Text.Trim();
+            var senha = PasswordBox.Password;
+
+            var usuario = Auth.Login(username, senha);
+
+            if (usuario == null)
+            {
+                MessageBox.Show("Usuário não encontrado ou senha incorreta.",
+                    "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (usuario.PrimeiroAcesso)
+            {
+                var first = new FirstAccessWindow(usuario)
+                {
+                    Owner = this
+                };
+                first.Show();
+                this.Hide();
+                return;
+            }
+
+            var main = new MainWindow(usuario);
+            main.Show();
+            this.Close();
+        }
+    }
 }
