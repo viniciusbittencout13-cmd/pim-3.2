@@ -9,94 +9,100 @@ namespace GLLRV.DesktopApp.Services
 {
     public static class JsonUserStore
     {
-        private static string DataFolder =>
+        private static readonly string BaseDir =
             Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data");
 
-        private static string UsersFile =>
-            Path.Combine(DataFolder, "usuarios.json");
+        private static readonly string UsersDir =
+            Path.Combine(BaseDir, "usuarios");
 
-        // Carrega usuários do JSON (ou cria usuário padrão)
-        public static List<Usuario> Load()
+        private static readonly string UsersFile =
+            Path.Combine(UsersDir, "usuarios.json");
+
+        private static readonly JsonSerializerOptions JsonOptions = new()
         {
-            try
-            {
-                if (!Directory.Exists(DataFolder))
-                    Directory.CreateDirectory(DataFolder);
+            WriteIndented = true
+        };
 
-                if (!File.Exists(UsersFile))
+        /// <summary>
+        /// Garante que o arquivo usuarios.json exista
+        /// e cria o usuário padrão vinicius/admin se estiver vazio.
+        /// </summary>
+        public static void EnsureSeedUser()
+        {
+            Directory.CreateDirectory(UsersDir);
+
+            if (!File.Exists(UsersFile) || new FileInfo(UsersFile).Length == 0)
+            {
+                var admin = new Usuario
                 {
-                    var defaultUsers = new List<Usuario>
-                    {
-                        new Usuario
-                        {
-                            Username = "vinicius",
-                            Senha = "123",
-                            Nivel = 2,
-                            Atribuicoes = "Servidores e gerenciamento de rede",
-                            PrimeiroAcesso = true,
-                            FraseSeguranca = ""
-                        }
-                    };
+                    Username = "vinicius",
+                    Senha = Auth.Sha256Hex("admin"),
+                    Nivel = 2,
+                    Atribuicoes = "Servidores e gerenciamento de rede",
+                    PrimeiroAcesso = true,
+                    FraseSeguranca = ""
+                };
 
-                    Save(defaultUsers);
-                    return defaultUsers;
-                }
-
-                var json = File.ReadAllText(UsersFile);
-                var users = JsonSerializer.Deserialize<List<Usuario>>(json);
-                return users ?? new List<Usuario>();
-            }
-            catch
-            {
-                return new List<Usuario>();
+                var list = new List<Usuario> { admin };
+                var json = JsonSerializer.Serialize(list, JsonOptions);
+                File.WriteAllText(UsersFile, json);
             }
         }
 
-        // Alias p/ manter compatibilidade com outros arquivos
-        public static List<Usuario> LoadUsers() => Load();
-        public static List<Usuario> Loadusers() => Load(); // se em algum lugar estiver com "Loadusers"
-
-        public static void Save(List<Usuario> usuarios)
+        public static List<Usuario> Load()
         {
-            if (!Directory.Exists(DataFolder))
-                Directory.CreateDirectory(DataFolder);
+            EnsureSeedUser(); // garante que existe antes de ler
 
-            var json = JsonSerializer.Serialize(
-                usuarios,
-                new JsonSerializerOptions { WriteIndented = true });
+            var json = File.ReadAllText(UsersFile);
+            var users = JsonSerializer.Deserialize<List<Usuario>>(json, JsonOptions)
+                        ?? new List<Usuario>();
 
+            return users;
+        }
+
+        public static void Save(List<Usuario> users)
+        {
+            Directory.CreateDirectory(UsersDir);
+
+            var json = JsonSerializer.Serialize(users, JsonOptions);
             File.WriteAllText(UsersFile, json);
         }
 
-        public static Usuario? Find(string username, string senha)
+        /// <summary>
+        /// Procura usuário pelo nome + senha em texto plano (convertida pra SHA256 aqui).
+        /// </summary>
+        public static Usuario? Find(string username, string passwordPlain)
         {
             var users = Load();
+            var hash = Auth.Sha256Hex(passwordPlain);
 
             return users.FirstOrDefault(u =>
                 string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase)
-                && u.Senha == senha);
+                && u.Senha == hash);
         }
 
-        public static Usuario? FindByUsername(string username)
+        /// <summary>
+        /// Atualiza ou adiciona usuário (usado no primeiro acesso, alterar senha etc.)
+        /// </summary>
+        public static void Update(Usuario user)
         {
             var users = Load();
 
-            return users.FirstOrDefault(u =>
-                string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase));
-        }
+            var existing = users.FirstOrDefault(u =>
+                string.Equals(u.Username, user.Username, StringComparison.OrdinalIgnoreCase));
 
-        // Usado pelo FirstAccess / atualização de dados
-        public static void UpdateUser(Usuario user)
-        {
-            var users = Load();
-
-            var idx = users.FindIndex(u =>
-                u.Username.Equals(user.Username, StringComparison.OrdinalIgnoreCase));
-
-            if (idx >= 0)
-                users[idx] = user;
+            if (existing != null)
+            {
+                existing.Senha = user.Senha;
+                existing.Nivel = user.Nivel;
+                existing.Atribuicoes = user.Atribuicoes;
+                existing.PrimeiroAcesso = user.PrimeiroAcesso;
+                existing.FraseSeguranca = user.FraseSeguranca;
+            }
             else
+            {
                 users.Add(user);
+            }
 
             Save(users);
         }
