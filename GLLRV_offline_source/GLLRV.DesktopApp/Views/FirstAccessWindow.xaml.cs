@@ -38,23 +38,4 @@ namespace GLLRV.DesktopApp.Views
             Close();
         }
     }
-}            _user.PrimeiroAcesso = false;
-            _user.FraseSeguranca = frase;
-
-            JsonUserStore.UpdateUser(_user);
-
-            var main = new MainWindow();
-            main.Show();
-            Close();
-        }
-    }
-}            _user.FraseSeguranca = frase;
-
-            JsonUserStore.UpdateUser(_user);
-
-            var main = new MainWindow();
-            main.Show();
-            Close();
-        }
-    }
 }
