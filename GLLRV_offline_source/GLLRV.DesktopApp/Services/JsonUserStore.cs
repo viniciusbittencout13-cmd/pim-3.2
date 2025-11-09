@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,50 +9,66 @@ namespace GLLRV.DesktopApp.Services
 {
     public static class JsonUserStore
     {
-        private static string GetFilePath()
-        {
-            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            return Path.Combine(baseDir, "data", "usuarios.json");
-        }
+        private static string DataFolder =>
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data");
 
-        public static List<Usuario> LoadUsers()
+        private static string UsersFile =>
+            Path.Combine(DataFolder, "usuarios.json");
+
+        public static List<Usuario> Load()
         {
-            var path = GetFilePath();
-            if (!File.Exists(path))
+            try
+            {
+                if (!Directory.Exists(DataFolder))
+                    Directory.CreateDirectory(DataFolder);
+
+                if (!File.Exists(UsersFile))
+                {
+                    var defaultUsers = new List<Usuario>
+                    {
+                        new Usuario
+                        {
+                            Username = "vinicius",
+                            Senha = "123",
+                            Nivel = 2,
+                            Atribuicoes = "Servidores e gerenciamento de rede",
+                            PrimeiroAcesso = true
+                        }
+                    };
+
+                    Save(defaultUsers);
+                    return defaultUsers;
+                }
+
+                var json = File.ReadAllText(UsersFile);
+                var users = JsonSerializer.Deserialize<List<Usuario>>(json);
+                return users ?? new List<Usuario>();
+            }
+            catch
+            {
                 return new List<Usuario>();
-
-            var json = File.ReadAllText(path);
-            var root = JsonSerializer.Deserialize<UsuariosRoot>(json);
-            return root?.usuarios ?? new List<Usuario>();
+            }
         }
 
-        public static void UpdateUser(Usuario usuario)
+        public static void Save(List<Usuario> usuarios)
         {
-            var users = LoadUsers();
-            var existing = users.FirstOrDefault(u =>
-                u.NomeUsuario.Equals(usuario.NomeUsuario, StringComparison.OrdinalIgnoreCase));
+            if (!Directory.Exists(DataFolder))
+                Directory.CreateDirectory(DataFolder);
 
-            if (existing != null)
-            {
-                existing.Senha = usuario.Senha;
-                existing.FraseSeguranca = usuario.FraseSeguranca;
-                existing.PrimeiroAcesso = usuario.PrimeiroAcesso;
-                existing.Nivel = usuario.Nivel;
-                existing.Categoria = usuario.Categoria;
-                existing.NomeCompleto = usuario.NomeCompleto;
-            }
-            else
-            {
-                users.Add(usuario);
-            }
+            var json = JsonSerializer.Serialize(
+                usuarios,
+                new JsonSerializerOptions { WriteIndented = true });
 
-            var json = JsonSerializer.Serialize(new UsuariosRoot { usuarios = users }, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(GetFilePath(), json);
+            File.WriteAllText(UsersFile, json);
         }
 
-        private class UsuariosRoot
+        public static Usuario? Find(string username, string senha)
         {
-            public List<Usuario> usuarios { get; set; } = new();
+            var users = Load();
+
+            return users.FirstOrDefault(u =>
+                string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase)
+                && u.Senha == senha);
         }
     }
 }
