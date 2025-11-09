@@ -13,7 +13,7 @@ namespace GLLRV.DesktopApp.Views
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            var username = UserNameTextBox.Text.Trim();
+            var username = UserNameTextBox.Text.Trim(); // nome deve bater com o XAML
             var senha = PasswordBox.Password;
 
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrEmpty(senha))
@@ -32,15 +32,12 @@ namespace GLLRV.DesktopApp.Views
                 return;
             }
 
-            // Por enquanto: se for primeiro acesso, podemos só marcar como já acessado e seguir.
             if (usuario.PrimeiroAcesso)
             {
-                usuario.PrimeiroAcesso = false;
-                var usuarios = JsonUserStore.Load();
-                var idx = usuarios.FindIndex(u => 
-                    u.Username.Equals(usuario.Username, System.StringComparison.OrdinalIgnoreCase));
-                if (idx >= 0) usuarios[idx] = usuario;
-                JsonUserStore.Save(usuarios);
+                var first = new FirstAccessWindow(usuario);
+                first.Show();
+                Close();
+                return;
             }
 
             var main = new MainWindow(usuario);
