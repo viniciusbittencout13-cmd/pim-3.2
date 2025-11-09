@@ -47,19 +47,19 @@ namespace GLLRV.DesktopApp
                 if (!File.Exists(usuariosPath))
                 {
                     var vinicius = new Usuario
-                    {
-                        UsuarioID = 1,
-                        Nome = "Vinicius Bittencourt",
-                        NomeUsuario = "vinicius",
-                        // senha padrão: admin
-                        SenhaSha256Hex = Auth.Sha256Hex("admin"),
-                        EhTecnico = true,
-                        NivelTecnico = 2,
-                        NivelPermissao = 2,
-                        Categoria = "Servidores / Gerenciamento de Rede",
-                        Email = "vinicius@gllrv.local",
-                        Telefone = "(11) 99999-0001"
-                    };
+{
+    UsuarioID = 1,
+    Nome = "Vinicius Bittencourt",
+    NomeUsuario = "vinicius",
+    // senha padrão: admin
+    SenhaSha256Hex = Auth.Sha256Hex("admin"),
+    EhTecnico = true,
+    NivelTecnico = 2,
+    NivelPermissao = 2,
+    Email = "vinicius@gllrv.local",
+    Telefone = "(11) 99999-0001"
+};
+
 
                     var json = System.Text.Json.JsonSerializer.Serialize(
                         new[] { vinicius },
