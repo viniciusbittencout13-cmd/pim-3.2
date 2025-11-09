@@ -15,8 +15,8 @@ namespace GLLRV.DesktopApp.Views
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            var username = UsernameTextBox.Text.Trim();   // TextBox do login
-            var password = PasswordBox.Password;          // PasswordBox da senha
+            var username = UsernameTextBox.Text.Trim();
+            var password = PasswordBox.Password;
 
             var usuario = _auth.Login(username, password);
             if (usuario == null)
@@ -31,13 +31,10 @@ namespace GLLRV.DesktopApp.Views
                 var first = new FirstAccessWindow(usuario, _auth);
                 var result = first.ShowDialog();
                 if (result != true)
-                {
-                    // Usuário cancelou, não entra
                     return;
-                }
             }
 
-            var main = new MainWindow(usuario); // sua tela principal recebe o usuário
+            var main = new MainWindow(usuario);
             main.Show();
             Close();
         }
