@@ -20,22 +20,21 @@ namespace GLLRV.DesktopApp.Views
 
             if (user == null)
             {
-                MessageBox.Show("Usuário não encontrado ou senha incorreta.",
-                    "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    "Usuário não encontrado ou senha incorreta.",
+                    "Erro",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
                 return;
             }
 
-            // Se for primeiro acesso, manda pra tela de primeiro acesso
             if (user.PrimeiroAcesso)
             {
-                // IMPORTANTE: aqui usamos o construtor que recebe Usuario
                 var first = new FirstAccessWindow(user);
                 first.Show();
             }
             else
             {
-                // Ajuste aqui se seu MainWindow aceitar Usuario no construtor.
-                // Se não aceitar, deixe assim mesmo:
                 var main = new MainWindow();
                 main.Show();
             }
