@@ -14,7 +14,8 @@ namespace GLLRV.DesktopApp.Views
             _user = user;
         }
 
-        private void ConfirmarButton_Click(object sender, RoutedEventArgs e)
+        // ESTE NOME TEM QUE BATER COM O Click DO XAML: ConfirmButton_Click
+        private void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
             var frase = SecurityPhraseTextBox.Text?.Trim() ?? "";
             var senha1 = NewPasswordBox.Password;
@@ -35,6 +36,15 @@ namespace GLLRV.DesktopApp.Views
             _user.Senha = Auth.Sha256Hex(senha1);
             _user.PrimeiroAcesso = false;
             _user.FraseSeguranca = frase;
+
+            JsonUserStore.UpdateUser(_user);
+
+            var main = new MainWindow();
+            main.Show();
+            Close();
+        }
+    }
+}            _user.FraseSeguranca = frase;
 
             JsonUserStore.UpdateUser(_user);
 
