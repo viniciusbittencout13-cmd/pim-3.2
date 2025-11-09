@@ -2,6 +2,7 @@ using System;
 using System.Windows;
 using GLLRV.DesktopApp.Services;
 using GLLRV.DesktopApp.Models;
+using GLLRV.DesktopApp.Views; // se o namespace da FirstAccessWindow/MainWindow estiver aqui
 
 namespace GLLRV.DesktopApp.Views
 {
