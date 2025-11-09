@@ -6,6 +6,8 @@ namespace GLLRV.DesktopApp.Views
 {
     public partial class LoginWindow : Window
     {
+        private readonly Auth _auth = new Auth();
+
         public LoginWindow()
         {
             InitializeComponent();
@@ -13,32 +15,30 @@ namespace GLLRV.DesktopApp.Views
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            var username = UserNameTextBox.Text;
-            var password = PasswordBox.Password;
+            var username = UsernameTextBox.Text.Trim();   // TextBox do login
+            var password = PasswordBox.Password;          // PasswordBox da senha
 
-            var user = Auth.Login(username, password);
-
-            if (user == null)
+            var usuario = _auth.Login(username, password);
+            if (usuario == null)
             {
-                MessageBox.Show(
-                    "Usuário não encontrado ou senha incorreta.",
-                    "Erro",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show("Usuário não encontrado ou senha incorreta.", "Erro",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            if (user.PrimeiroAcesso)
+            if (usuario.PrimeiroAcesso)
             {
-                var first = new FirstAccessWindow(user);
-                first.Show();
-            }
-            else
-            {
-                var main = new MainWindow();
-                main.Show();
+                var first = new FirstAccessWindow(usuario, _auth);
+                var result = first.ShowDialog();
+                if (result != true)
+                {
+                    // Usuário cancelou, não entra
+                    return;
+                }
             }
 
+            var main = new MainWindow(usuario); // sua tela principal recebe o usuário
+            main.Show();
             Close();
         }
     }
