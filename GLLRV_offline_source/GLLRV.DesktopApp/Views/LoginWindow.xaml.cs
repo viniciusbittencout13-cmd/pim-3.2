@@ -43,7 +43,6 @@ namespace GLLRV.DesktopApp.Views
 
             if (usuario.PrimeiroAcesso)
             {
-                // Primeiro acesso: senha precisa bater com a atual (admin na primeira vez)
                 if (hashDigitado != usuario.SenhaSha256Hex)
                 {
                     MessageBox.Show("Senha incorreta.", "Erro",
@@ -58,7 +57,6 @@ namespace GLLRV.DesktopApp.Views
                 return;
             }
 
-            // Acesso normal
             if (hashDigitado != usuario.SenhaSha256Hex)
             {
                 MessageBox.Show("Usuário ou senha inválidos.", "Erro",
@@ -71,21 +69,17 @@ namespace GLLRV.DesktopApp.Views
             Close();
         }
 
-        /// <summary>
-        /// Carrega usuarios.json. Se não existir, cria o padrão com Vinicius.
-        /// </summary>
         private Usuario[] CarregarOuCriarUsuarios()
         {
-            var basePath = AppContext.BaseDirectory;
-            var dataFolder = App.Configuration["DataFolder"] ?? "data";
-            var dir = Path.Combine(basePath, dataFolder);
+            // Usa SEMPRE a pasta data ao lado do .exe
+            var dir = App.DataFolderPath;
             Directory.CreateDirectory(dir);
 
             var path = Path.Combine(dir, "usuarios.json");
 
             if (!File.Exists(path))
             {
-                // Cria usuário padrão Vinicius
+                // Se por algum motivo sumiu, recria o Vinicius
                 var vinicius = new Usuario
                 {
                     UsuarioID = 1,
@@ -97,7 +91,8 @@ namespace GLLRV.DesktopApp.Views
                     NivelPermissao = 2,
                     Email = "vinicius@gllrv.local",
                     Telefone = "(11) 99999-0001",
-                    PrimeiroAcesso = true
+                    PrimeiroAcesso = true,
+                    FraseSeguranca = ""
                 };
 
                 var jsonNovo = JsonSerializer.Serialize(
