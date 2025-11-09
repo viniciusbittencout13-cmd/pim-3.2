@@ -6,27 +6,26 @@ namespace GLLRV.DesktopApp.Services
 {
     public static class Auth
     {
-        // Gera SHA256 em hexadecimal
-        public static string Sha256Hex(string raw)
+        public static string Sha256Hex(string input)
         {
-            using var sha = SHA256.Create();
-            var bytes = Encoding.UTF8.GetBytes(raw ?? string.Empty);
-            var hash = sha.ComputeHash(bytes);
-            var sb = new StringBuilder(hash.Length * 2);
+            if (string.IsNullOrEmpty(input))
+                return string.Empty;
 
+            using var sha = SHA256.Create();
+            var bytes = Encoding.UTF8.GetBytes(input);
+            var hash = sha.ComputeHash(bytes);
+
+            var sb = new StringBuilder(hash.Length * 2);
             foreach (var b in hash)
                 sb.Append(b.ToString("x2"));
 
             return sb.ToString();
         }
 
-        // Faz o login usando JSON
-        public static Usuario? Login(string username, string password)
+        public static Usuario? Login(string username, string passwordPlain)
         {
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-                return null;
-
-            return JsonUserStore.Find(username.Trim(), password);
+            // Autentica usando JSON
+            return JsonUserStore.Find(username, passwordPlain);
         }
     }
 }
