@@ -7,14 +7,22 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanResize"
         Background="#f2f4f8">
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="260" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
         <!-- MENU LATERAL -->
-        <Border Grid.Column="0" Background="#111827">
+        <Border Grid.Row="0"
+                Grid.Column="0"
+                Grid.RowSpan="2"
+                Background="#111827">
             <StackPanel Margin="16">
                 <TextBlock Text="GLLRV"
                            Foreground="White"
@@ -22,47 +30,57 @@
                            FontWeight="Bold"
                            Margin="0 0 0 24" />
 
-                <Button Content="Início"
+                <Button Content="Usuários"
                         Margin="0 0 0 8"
                         Height="40"
-                        Click="HomeButton_Click" />
+                        Click="UsuariosButton_Click" />
 
-                <Button x:Name="ChamadosButton"
-                        Content="Chamados"
+                <Button Content="Relatórios"
                         Margin="0 0 0 8"
                         Height="40"
-                        Click="ChamadosButton_Click" />
+                        Click="RelatoriosButton_Click" />
 
-                <Button Content="Sair"
+                <Button Content="Chamados pendentes"
                         Margin="0 0 0 8"
                         Height="40"
-                        Click="SairButton_Click" />
+                        Click="ChamadosPendentesButton_Click" />
+
+                <Button Content="Histórico chamados"
+                        Margin="0 0 0 8"
+                        Height="40"
+                        Click="HistoricoChamadosButton_Click" />
+
+                <Button Content="Chamados andamento"
+                        Margin="0 0 0 8"
+                        Height="40"
+                        Click="ChamadosAndamentoButton_Click" />
+
+                <Button Content="Configurações"
+                        Margin="0 24 0 0"
+                        Height="40"
+                        Click="ConfiguracaoButton_Click" />
             </StackPanel>
         </Border>
 
+        <!-- BOTÃO SAIR (TOPO DIREITA) -->
+        <Button Grid.Row="0"
+                Grid.Column="1"
+                Content="SAIR"
+                Width="100"
+                Height="36"
+                Margin="0,12,16,12"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Click="SairButton_Click" />
+
         <!-- ÁREA DE CONTEÚDO -->
-        <Border Grid.Column="1"
+        <Border Grid.Row="1"
+                Grid.Column="1"
                 Margin="24"
                 Background="White"
                 CornerRadius="24"
                 Padding="24">
-            <Grid x:Name="ContentArea">
-                <!-- Conteúdo inicial -->
-                <StackPanel>
-                    <TextBlock Text="Bem-vindo!"
-                               FontSize="24"
-                               FontWeight="Bold"
-                               Margin="0 0 0 8" />
-                    <TextBlock Text="Este é o modo offline (JSON)."
-                               FontSize="14" />
-                    <TextBlock Text="Clique em Chamados para visualizar os chamados."
-                               FontSize="14"
-                               Margin="0 8 0 0" />
-                    <TextBlock Text="Usuário logado: admin"
-                               FontSize="14"
-                               Margin="0 16 0 0" />
-                </StackPanel>
-            </Grid>
+            <Grid x:Name="ContentArea" />
         </Border>
     </Grid>
 </Window>
