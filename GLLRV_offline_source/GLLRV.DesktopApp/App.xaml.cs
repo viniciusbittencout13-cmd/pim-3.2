@@ -2,16 +2,16 @@ using System;
 using System.IO;
 using System.Windows;
 using Microsoft.Extensions.Configuration;
-using GLLRV.DesktopApp.Services;
 using GLLRV.DesktopApp.Models;
+using GLLRV.DesktopApp.Services;
 using GLLRV.DesktopApp.Views;
+using System.Text.Json;
 
 namespace GLLRV.DesktopApp
 {
     public partial class App : Application
     {
         public static IConfiguration Configuration { get; private set; } = null!;
-        public static IDataStore DataStore { get; private set; } = null!;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -21,13 +21,12 @@ namespace GLLRV.DesktopApp
 
                 var basePath = AppContext.BaseDirectory;
 
-                // Garante appsettings.json básico
+                // appsettings.json simples para apontar a pasta de dados
                 var appSettingsPath = Path.Combine(basePath, "appsettings.json");
                 if (!File.Exists(appSettingsPath))
                 {
                     File.WriteAllText(appSettingsPath, """
 {
-  "Mode": "Offline",
   "DataFolder": "data"
 }
 """);
@@ -42,43 +41,39 @@ namespace GLLRV.DesktopApp
                 var fullDataPath = Path.Combine(basePath, dataFolder);
                 Directory.CreateDirectory(fullDataPath);
 
-                // Cria usuário padrão: VINICIUS BITTENCOURT (nível 2, Servidores / Rede)
+                // Garante arquivo de usuários com Vinicius padrão
                 var usuariosPath = Path.Combine(fullDataPath, "usuarios.json");
                 if (!File.Exists(usuariosPath))
                 {
                     var vinicius = new Usuario
-{
-    UsuarioID = 1,
-    Nome = "Vinicius Bittencourt",
-    NomeUsuario = "vinicius",
-    // senha padrão: admin
-    SenhaSha256Hex = Auth.Sha256Hex("admin"),
-    EhTecnico = true,
-    NivelTecnico = 2,
-    NivelPermissao = 2,
-    Email = "vinicius@gllrv.local",
-    Telefone = "(11) 99999-0001"
-};
+                    {
+                        UsuarioID = 1,
+                        Nome = "Vinicius Bittencourt",
+                        NomeUsuario = "vinicius",
+                        SenhaSha256Hex = Auth.Sha256Hex("admin"), // senha inicial
+                        EhTecnico = true,
+                        NivelTecnico = 2,
+                        NivelPermissao = 2,
+                        Email = "vinicius@gllrv.local",
+                        Telefone = "(11) 99999-0001",
+                        PrimeiroAcesso = true
+                    };
 
-
-                    var json = System.Text.Json.JsonSerializer.Serialize(
+                    var json = JsonSerializer.Serialize(
                         new[] { vinicius },
-                        new System.Text.Json.JsonSerializerOptions
+                        new JsonSerializerOptions
                         {
                             WriteIndented = true,
-                            PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                         });
 
                     File.WriteAllText(usuariosPath, json);
                 }
 
-                // DataStore JSON offline
-                DataStore = new JsonDataStore(fullDataPath);
-
-                // Abre janela principal (já começa em Chamados Pendentes pelo MainWindow)
-                var main = new MainWindow();
-                MainWindow = main;
-                main.Show();
+                // Abre a tela de login (não entra mais direto)
+                var login = new LoginWindow();
+                MainWindow = login;
+                login.Show();
             }
             catch (Exception ex)
             {
