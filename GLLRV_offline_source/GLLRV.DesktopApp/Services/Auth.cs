@@ -1,31 +1,29 @@
-using System.Security.Cryptography;
-using System.Text;
 using GLLRV.DesktopApp.Models;
 
 namespace GLLRV.DesktopApp.Services
 {
-    public static class Auth
+    public class Auth
     {
-        public static string Sha256Hex(string input)
+        private readonly JsonUserStore _store = new JsonUserStore();
+
+        public Usuario? Login(string username, string password)
         {
-            if (string.IsNullOrEmpty(input))
-                return string.Empty;
+            var user = _store.GetByUsername(username);
+            if (user == null) return null;
 
-            using var sha = SHA256.Create();
-            var bytes = Encoding.UTF8.GetBytes(input);
-            var hash = sha.ComputeHash(bytes);
+            var hash = JsonUserStore.Sha256(password);
+            if (!string.Equals(user.SenhaHash, hash, System.StringComparison.OrdinalIgnoreCase))
+                return null;
 
-            var sb = new StringBuilder(hash.Length * 2);
-            foreach (var b in hash)
-                sb.Append(b.ToString("x2"));
-
-            return sb.ToString();
+            return user;
         }
 
-        public static Usuario? Login(string username, string passwordPlain)
+        public void AtualizarPrimeiroAcesso(Usuario usuario, string novaSenha, string fraseSeguranca)
         {
-            // Autentica usando JSON
-            return JsonUserStore.Find(username, passwordPlain);
+            usuario.SenhaHash = JsonUserStore.Sha256(novaSenha);
+            usuario.FraseSeguranca = fraseSeguranca;
+            usuario.PrimeiroAcesso = false;
+            _store.UpdateUsuario(usuario);
         }
     }
 }
