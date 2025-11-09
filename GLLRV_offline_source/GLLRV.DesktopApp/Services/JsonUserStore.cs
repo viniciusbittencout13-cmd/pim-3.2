@@ -24,7 +24,6 @@ namespace GLLRV.DesktopApp.Services
 
             if (!File.Exists(_usersFile))
             {
-                // Usuário padrão inicial
                 var defaultUser = new Usuario
                 {
                     NomeUsuario = "vinicius",
@@ -49,8 +48,10 @@ namespace GLLRV.DesktopApp.Services
 
         public void SaveUsers(List<Usuario> users)
         {
-            var json = JsonSerializer.Serialize(users,
+            var json = JsonSerializer.Serialize(
+                users,
                 new JsonSerializerOptions { WriteIndented = true });
+
             File.WriteAllText(_usersFile, json);
         }
 
@@ -83,39 +84,8 @@ namespace GLLRV.DesktopApp.Services
             var sb = new StringBuilder();
             foreach (var b in hash)
                 sb.Append(b.ToString("x2"));
+
             return sb.ToString();
-        }
-    }
-}                && u.Senha == hash);
-        }
-
-        public static void Update(Usuario user)
-        {
-            var users = Load();
-
-            var existing = users.FirstOrDefault(u =>
-                string.Equals(u.Username, user.Username, StringComparison.OrdinalIgnoreCase));
-
-            if (existing != null)
-            {
-                existing.Senha = user.Senha;
-                existing.Nivel = user.Nivel;
-                existing.Atribuicoes = user.Atribuicoes;
-                existing.PrimeiroAcesso = user.PrimeiroAcesso;
-                existing.FraseSeguranca = user.FraseSeguranca;
-            }
-            else
-            {
-                users.Add(user);
-            }
-
-            Save(users);
-        }
-
-        // Alias para o código que chama UpdateUser
-        public static void UpdateUser(Usuario user)
-        {
-            Update(user);
         }
     }
 }
