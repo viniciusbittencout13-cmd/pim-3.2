@@ -4,45 +4,45 @@ using GLLRV.DesktopApp.Services;
 
 namespace GLLRV.DesktopApp.Views
 {
-    public partial class FirstAccessWindow : Window
+    public partial class LoginWindow : Window
     {
-        private readonly Usuario _usuario;
-
-        public FirstAccessWindow(Usuario usuario)
+        public LoginWindow()
         {
             InitializeComponent();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            _usuario = usuario;
         }
 
-        private void ConfirmarButton_Click(object sender, RoutedEventArgs e)
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            var frase = SecurityPhraseTextBox.Text.Trim();
-            var novaSenha = NewPasswordBox.Password;
-            var repetir = ConfirmPasswordBox.Password;
+            var username = UsernameTextBox.Text.Trim();
+            var password = PasswordBox.Password;
 
-            if (string.IsNullOrWhiteSpace(frase) ||
-                string.IsNullOrWhiteSpace(novaSenha) ||
-                string.IsNullOrWhiteSpace(repetir))
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Preencha todos os campos.", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Informe usuário e senha.", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            if (novaSenha != repetir)
+            var usuario = Auth.Login(username, password);
+
+            if (usuario == null)
             {
-                MessageBox.Show("As senhas não conferem.", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Usuário não encontrado.", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            _usuario.Senha = novaSenha;          // direto, sem hash
-            _usuario.FraseSeguranca = frase;
-            _usuario.PrimeiroAcesso = false;
+            // Primeiro acesso -> trocar senha + frase
+            if (usuario.PrimeiroAcesso)
+            {
+                var first = new FirstAccessWindow(usuario);
+                first.Show();
+            }
+            else
+            {
+                var main = new MainWindow(usuario);
+                main.Show();
+            }
 
-            Auth.AtualizarUsuario(_usuario);
-
-            var main = new MainWindow(_usuario);
-            main.Show();
             Close();
         }
     }
