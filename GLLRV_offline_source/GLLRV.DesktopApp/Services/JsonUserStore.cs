@@ -23,6 +23,7 @@ namespace GLLRV.DesktopApp.Services
             WriteIndented = true
         };
 
+        // Gera o usuário padrão se não existir
         public static void EnsureSeedUser()
         {
             Directory.CreateDirectory(UsersDir);
@@ -31,6 +32,7 @@ namespace GLLRV.DesktopApp.Services
             {
                 var admin = new Usuario
                 {
+                    // IMPORTANTE: esse campo TEM que bater com o que o login usa
                     Username = "vinicius",
                     Senha = Auth.Sha256Hex("admin"),
                     Nivel = 2,
@@ -97,7 +99,7 @@ namespace GLLRV.DesktopApp.Services
             Save(users);
         }
 
-        // <- ESSA PARTE É O QUE FALTAVA
+        // Alias para o código que chama UpdateUser
         public static void UpdateUser(Usuario user)
         {
             Update(user);
