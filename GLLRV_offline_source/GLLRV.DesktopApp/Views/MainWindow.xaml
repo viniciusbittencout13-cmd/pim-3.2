@@ -18,18 +18,45 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- MENU LATERAL -->
+        <!-- MENU + PERFIL TÉCNICO (ESQUERDA) -->
         <Border Grid.Row="0"
                 Grid.Column="0"
                 Grid.RowSpan="2"
                 Background="#111827">
             <StackPanel Margin="16">
-                <TextBlock Text="GLLRV"
-                           Foreground="White"
-                           FontSize="24"
-                           FontWeight="Bold"
-                           Margin="0 0 0 24" />
 
+                <!-- BLOCO DO TÉCNICO -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
+                    <!-- FOTO (placeholder) -->
+                    <Border Width="56"
+                            Height="56"
+                            CornerRadius="28"
+                            Background="#ffffff33"
+                            VerticalAlignment="Center">
+                        <!-- Quando tiver foto, dá pra usar ImageBrush aqui -->
+                        <TextBlock Text="VB"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="White"
+                                   FontWeight="Bold"/>
+                    </Border>
+
+                    <!-- DADOS DO TÉCNICO -->
+                    <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="VINICIUS BITTENCOURT"
+                                   Foreground="White"
+                                   FontSize="12"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="TÉCNICO: NÍVEL 2"
+                                   Foreground="White"
+                                   FontSize="11"/>
+                        <TextBlock Text="CATEGORIA: SERVIDORES / REDE"
+                                   Foreground="White"
+                                   FontSize="11"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- BOTÕES DO MENU -->
                 <Button Content="Usuários"
                         Margin="0 0 0 8"
                         Height="40"
