@@ -1,0 +1,47 @@
+<Window x:Class="GLLRV.DesktopApp.Views.FirstAccessWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Primeiro Acesso"
+        Width="1280"
+        Height="720"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="#FFE9F0F5">
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Width="600">
+            <TextBlock Text="Seja Bem Vindo!"
+                       FontSize="28"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,4"/>
+            <TextBlock Text="Primeiro Acesso"
+                       FontSize="22"
+                       FontWeight="SemiBold"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,24"/>
+
+            <TextBlock Text="Digite uma frase de segurança" />
+            <TextBox x:Name="FraseSegurancaTextBox"
+                     Height="40"
+                     Margin="0,4,0,16"/>
+
+            <TextBlock Text="Nova senha" />
+            <PasswordBox x:Name="NovaSenhaBox"
+                         Height="40"
+                         Margin="0,4,0,16"/>
+
+            <TextBlock Text="Repita nova senha" />
+            <PasswordBox x:Name="RepeteSenhaBox"
+                         Height="40"
+                         Margin="0,4,0,24"/>
+
+            <Button Content="CONFIRMAR"
+                    Height="50"
+                    FontSize="18"
+                    Click="ConfirmarButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
