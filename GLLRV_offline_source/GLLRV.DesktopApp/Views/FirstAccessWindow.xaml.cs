@@ -11,42 +11,42 @@ namespace GLLRV.DesktopApp.Views
         public FirstAccessWindow(Usuario usuario)
         {
             InitializeComponent();
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             _usuario = usuario;
         }
 
         private void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
             var frase = SecurityPhraseTextBox.Text.Trim();
-            var novaSenha = NewPasswordBox.Password.Trim();
-            var confirma = ConfirmPasswordBox.Password.Trim();
+            var novaSenha = NewPasswordBox.Password;
+            var repeteSenha = ConfirmPasswordBox.Password;
 
-            if (string.IsNullOrWhiteSpace(frase))
+            if (string.IsNullOrWhiteSpace(frase) ||
+                string.IsNullOrWhiteSpace(novaSenha) ||
+                string.IsNullOrWhiteSpace(repeteSenha))
             {
-                MessageBox.Show("Informe uma frase de segurança.");
+                MessageBox.Show("Preencha todos os campos.", "Aviso",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(novaSenha))
+            if (novaSenha != repeteSenha)
             {
-                MessageBox.Show("Informe a nova senha.");
+                MessageBox.Show("As senhas não coincidem.", "Erro",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            if (novaSenha != confirma)
-            {
-                MessageBox.Show("As senhas não conferem.");
-                return;
-            }
-
-            _usuario.Senha = novaSenha;
             _usuario.FraseSeguranca = frase;
+            _usuario.Senha = novaSenha;
             _usuario.PrimeiroAcesso = false;
 
             JsonUserStore.UpdateUser(_usuario);
 
-            MessageBox.Show("Dados atualizados com sucesso.");
-            DialogResult = true;
+            MessageBox.Show("Senha atualizada com sucesso.", "Informação",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+
+            var main = new MainWindow(_usuario);
+            main.Show();
             Close();
         }
     }
