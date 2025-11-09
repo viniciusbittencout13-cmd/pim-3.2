@@ -30,7 +30,7 @@
             <TextBlock Text="SENHA" />
             <PasswordBox x:Name="PasswordBox"
                          Height="40"
-                         Margin="0,4,0,8"/>
+                         Margin="0,4,0,16"/>
 
             <TextBlock Text="ESQUECI MINHA SENHA"
                        Foreground="Gray"
