@@ -1,17 +1,17 @@
 using System;
 using System.IO;
+using System.Text.Json;
 using System.Windows;
-using Microsoft.Extensions.Configuration;
 using GLLRV.DesktopApp.Models;
 using GLLRV.DesktopApp.Services;
 using GLLRV.DesktopApp.Views;
-using System.Text.Json;
 
 namespace GLLRV.DesktopApp
 {
     public partial class App : Application
     {
-        public static IConfiguration Configuration { get; private set; } = null!;
+        // Caminho absoluto da pasta de dados ao lado do .exe
+        public static string DataFolderPath { get; private set; } = null!;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -21,28 +21,11 @@ namespace GLLRV.DesktopApp
 
                 var basePath = AppContext.BaseDirectory;
 
-                // appsettings.json simples para apontar a pasta de dados
-                var appSettingsPath = Path.Combine(basePath, "appsettings.json");
-                if (!File.Exists(appSettingsPath))
-                {
-                    File.WriteAllText(appSettingsPath, """
-{
-  "DataFolder": "data"
-}
-""");
-                }
+                DataFolderPath = Path.Combine(basePath, "data");
+                Directory.CreateDirectory(DataFolderPath);
 
-                Configuration = new ConfigurationBuilder()
-                    .SetBasePath(basePath)
-                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
-                    .Build();
-
-                var dataFolder = Configuration["DataFolder"] ?? "data";
-                var fullDataPath = Path.Combine(basePath, dataFolder);
-                Directory.CreateDirectory(fullDataPath);
-
-                // Garante arquivo de usuários com Vinicius padrão
-                var usuariosPath = Path.Combine(fullDataPath, "usuarios.json");
+                // Garante usuarios.json com usuário padrão Vinicius se não existir
+                var usuariosPath = Path.Combine(DataFolderPath, "usuarios.json");
                 if (!File.Exists(usuariosPath))
                 {
                     var vinicius = new Usuario
@@ -56,7 +39,8 @@ namespace GLLRV.DesktopApp
                         NivelPermissao = 2,
                         Email = "vinicius@gllrv.local",
                         Telefone = "(11) 99999-0001",
-                        PrimeiroAcesso = true
+                        PrimeiroAcesso = true,
+                        FraseSeguranca = ""
                     };
 
                     var json = JsonSerializer.Serialize(
@@ -70,8 +54,8 @@ namespace GLLRV.DesktopApp
                     File.WriteAllText(usuariosPath, json);
                 }
 
-                // Abre a tela de login (não entra mais direto)
-                var login = new LoginWindow();
+                // Abre a tela de login
+                var login = new Views.LoginWindow();
                 MainWindow = login;
                 login.Show();
             }
