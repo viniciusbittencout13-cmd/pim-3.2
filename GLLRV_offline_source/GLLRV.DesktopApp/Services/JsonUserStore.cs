@@ -22,25 +22,46 @@ namespace GLLRV.DesktopApp.Services
             if (!Directory.Exists(_dataDir))
                 Directory.CreateDirectory(_dataDir);
 
+            EnsureSeedUser();
+        }
+
+        // Garante que exista pelo menos o usuário inicial
+        public void EnsureSeedUser()
+        {
             if (!File.Exists(_usersFile))
             {
-                var defaultUser = new Usuario
-                {
-                    NomeUsuario = "vinicius",
-                    NomeCompleto = "Vinicius Bittencourt",
-                    Nivel = "2",
-                    Categoria = "Servidores e Gerenciamento de Rede",
-                    SenhaHash = Sha256("admin"),
-                    FraseSeguranca = "",
-                    PrimeiroAcesso = true
-                };
+                var defaultUser = CreateDefaultUser();
+                SaveUsers(new List<Usuario> { defaultUser });
+                return;
+            }
 
+            var users = LoadUsers();
+            if (users == null || users.Count == 0)
+            {
+                var defaultUser = CreateDefaultUser();
                 SaveUsers(new List<Usuario> { defaultUser });
             }
         }
 
+        private static Usuario CreateDefaultUser()
+        {
+            return new Usuario
+            {
+                NomeUsuario = "vinicius",
+                NomeCompleto = "Vinicius Bittencourt",
+                Nivel = "2",
+                Categoria = "Servidores e Gerenciamento de Rede",
+                SenhaHash = Sha256("admin"),
+                FraseSeguranca = "",
+                PrimeiroAcesso = true
+            };
+        }
+
         public List<Usuario> LoadUsers()
         {
+            if (!File.Exists(_usersFile))
+                return new List<Usuario>();
+
             var json = File.ReadAllText(_usersFile);
             return JsonSerializer.Deserialize<List<Usuario>>(json)
                    ?? new List<Usuario>();
