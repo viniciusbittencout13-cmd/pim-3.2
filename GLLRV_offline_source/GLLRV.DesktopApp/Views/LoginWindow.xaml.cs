@@ -1,6 +1,6 @@
 using System.Windows;
 using GLLRV.DesktopApp.Services;
-using GLLRV.DesktopApp.Views;
+using GLLRV.DesktopApp.Models;
 
 namespace GLLRV.DesktopApp.Views
 {
@@ -9,28 +9,38 @@ namespace GLLRV.DesktopApp.Views
         public LoginWindow()
         {
             InitializeComponent();
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            var username = UsernameTextBox.Text.Trim();
-            var senha = PasswordBox.Password.Trim();
+            var username = UserNameTextBox.Text.Trim();
+            var senha = PasswordBox.Password;
 
-            var usuario = Auth.Login(username, senha);
-
-            if (usuario == null)
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrEmpty(senha))
             {
-                MessageBox.Show("Usuário não encontrado.", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Informe usuário e senha.", "Aviso",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
+            var usuario = JsonUserStore.Find(username, senha);
+
+            if (usuario is null)
+            {
+                MessageBox.Show("Usuário não encontrado.", "Erro",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // Por enquanto: se for primeiro acesso, podemos só marcar como já acessado e seguir.
             if (usuario.PrimeiroAcesso)
             {
-                var first = new FirstAccessWindow(usuario);
-                var result = first.ShowDialog();
-                if (result != true)
-                    return;
+                usuario.PrimeiroAcesso = false;
+                var usuarios = JsonUserStore.Load();
+                var idx = usuarios.FindIndex(u => 
+                    u.Username.Equals(usuario.Username, System.StringComparison.OrdinalIgnoreCase));
+                if (idx >= 0) usuarios[idx] = usuario;
+                JsonUserStore.Save(usuarios);
             }
 
             var main = new MainWindow(usuario);
