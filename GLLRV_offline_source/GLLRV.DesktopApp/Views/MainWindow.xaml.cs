@@ -1,134 +1,95 @@
+using System;
+using System.IO;
 using System.Windows;
-using System.Windows.Controls;
+using Microsoft.Extensions.Configuration;
+using GLLRV.DesktopApp.Services;
+using GLLRV.DesktopApp.Models;
+using GLLRV.DesktopApp.Views;
 
-namespace GLLRV.DesktopApp.Views
+namespace GLLRV.DesktopApp
 {
-    public partial class MainWindow : Window
+    public partial class App : Application
     {
-        public MainWindow()
-        {
-            InitializeComponent();
-            // Já inicia na aba de Chamados Pendentes
-            ChamadosPendentesButton_Click(null, null);
-        }
+        public static IConfiguration Configuration { get; private set; } = null!;
+        public static IDataStore DataStore { get; private set; } = null!;
 
-        private void SetPage(UIElement conteudo)
+        protected override void OnStartup(StartupEventArgs e)
         {
-            ContentArea.Children.Clear();
-            ContentArea.Children.Add(conteudo);
-        }
+            try
+            {
+                base.OnStartup(e);
 
-        private void UsuariosButton_Click(object sender, RoutedEventArgs e)
-        {
-            var panel = new StackPanel();
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Usuários",
-                FontSize = 22,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 12)
-            });
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Área de cadastro e edição de usuários (modo offline).",
-                FontSize = 14
-            });
-            SetPage(panel);
-        }
+                var basePath = AppContext.BaseDirectory;
 
-        private void RelatoriosButton_Click(object sender, RoutedEventArgs e)
-        {
-            var panel = new StackPanel();
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Relatórios",
-                FontSize = 22,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 12)
-            });
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Relatórios de desempenho e avaliação dos atendimentos.",
-                FontSize = 14
-            });
-            SetPage(panel);
-        }
+                // Garante appsettings.json básico
+                var appSettingsPath = Path.Combine(basePath, "appsettings.json");
+                if (!File.Exists(appSettingsPath))
+                {
+                    File.WriteAllText(appSettingsPath, """
+{
+  "Mode": "Offline",
+  "DataFolder": "data"
+}
+""");
+                }
 
-        private void ChamadosPendentesButton_Click(object sender, RoutedEventArgs e)
-        {
-            var panel = new StackPanel();
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Chamados Pendentes",
-                FontSize = 22,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 12)
-            });
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Lista de chamados que ainda não foram atendidos.",
-                FontSize = 14
-            });
-            SetPage(panel);
-        }
+                Configuration = new ConfigurationBuilder()
+                    .SetBasePath(basePath)
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+                    .Build();
 
-        private void HistoricoChamadosButton_Click(object sender, RoutedEventArgs e)
-        {
-            var panel = new StackPanel();
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Histórico de Chamados",
-                FontSize = 22,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 12)
-            });
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Chamados finalizados e arquivados.",
-                FontSize = 14
-            });
-            SetPage(panel);
-        }
+                var dataFolder = Configuration["DataFolder"] ?? "data";
+                var fullDataPath = Path.Combine(basePath, dataFolder);
+                Directory.CreateDirectory(fullDataPath);
 
-        private void ChamadosAndamentoButton_Click(object sender, RoutedEventArgs e)
-        {
-            var panel = new StackPanel();
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Chamados em Andamento",
-                FontSize = 22,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 12)
-            });
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Chamados atualmente sendo atendidos.",
-                FontSize = 14
-            });
-            SetPage(panel);
-        }
+                // Cria usuário padrão: VINICIUS BITTENCOURT (nível 2, Servidores / Rede)
+                var usuariosPath = Path.Combine(fullDataPath, "usuarios.json");
+                if (!File.Exists(usuariosPath))
+                {
+                    var vinicius = new Usuario
+                    {
+                        UsuarioID = 1,
+                        Nome = "Vinicius Bittencourt",
+                        NomeUsuario = "vinicius",
+                        // senha padrão: admin
+                        SenhaSha256Hex = Auth.Sha256Hex("admin"),
+                        EhTecnico = true,
+                        NivelTecnico = 2,
+                        NivelPermissao = 2,
+                        Categoria = "Servidores / Gerenciamento de Rede",
+                        Email = "vinicius@gllrv.local",
+                        Telefone = "(11) 99999-0001"
+                    };
 
-        private void ConfiguracaoButton_Click(object sender, RoutedEventArgs e)
-        {
-            var panel = new StackPanel();
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Configurações",
-                FontSize = 22,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 12)
-            });
-            panel.Children.Add(new TextBlock
-            {
-                Text = "Preferências do sistema e dados do usuário logado.",
-                FontSize = 14
-            });
-            SetPage(panel);
-        }
+                    var json = System.Text.Json.JsonSerializer.Serialize(
+                        new[] { vinicius },
+                        new System.Text.Json.JsonSerializerOptions
+                        {
+                            WriteIndented = true,
+                            PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+                        });
 
-        private void SairButton_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
+                    File.WriteAllText(usuariosPath, json);
+                }
+
+                // DataStore JSON offline
+                DataStore = new JsonDataStore(fullDataPath);
+
+                // Abre janela principal (já começa em Chamados Pendentes pelo MainWindow)
+                var main = new MainWindow();
+                MainWindow = main;
+                main.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Erro ao iniciar a aplicação:\n" + ex,
+                    "GLLRV - Erro",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+
+                Shutdown();
+            }
         }
     }
 }
