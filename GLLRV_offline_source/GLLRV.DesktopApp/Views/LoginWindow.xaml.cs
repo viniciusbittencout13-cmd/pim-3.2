@@ -1,6 +1,6 @@
 using System.Windows;
-using GLLRV.DesktopApp.Models;
 using GLLRV.DesktopApp.Services;
+using GLLRV.DesktopApp.Views;
 
 namespace GLLRV.DesktopApp.Views
 {
@@ -15,15 +15,9 @@ namespace GLLRV.DesktopApp.Views
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             var username = UsernameTextBox.Text.Trim();
-            var password = PasswordBox.Password;
+            var senha = PasswordBox.Password.Trim();
 
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-            {
-                MessageBox.Show("Informe usuário e senha.", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            var usuario = Auth.Login(username, password);
+            var usuario = Auth.Login(username, senha);
 
             if (usuario == null)
             {
@@ -31,18 +25,16 @@ namespace GLLRV.DesktopApp.Views
                 return;
             }
 
-            // Primeiro acesso -> trocar senha + frase
             if (usuario.PrimeiroAcesso)
             {
                 var first = new FirstAccessWindow(usuario);
-                first.Show();
-            }
-            else
-            {
-                var main = new MainWindow(usuario);
-                main.Show();
+                var result = first.ShowDialog();
+                if (result != true)
+                    return;
             }
 
+            var main = new MainWindow(usuario);
+            main.Show();
             Close();
         }
     }
