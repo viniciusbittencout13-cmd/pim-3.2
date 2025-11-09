@@ -5,12 +5,13 @@ namespace GLLRV.DesktopApp
 {
     public partial class App : Application
     {
-        protected override void OnStartup(StartupEventArgs e)
+       protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
-
-            var login = new LoginWindow();
-            login.Show();
+        base.OnStartup(e);
+    
+        var login = new Views.LoginWindow();
+        login.Show();
         }
+
     }
 }
