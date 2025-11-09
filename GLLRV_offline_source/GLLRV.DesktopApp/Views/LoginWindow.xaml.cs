@@ -1,8 +1,6 @@
-using System;
 using System.Windows;
-using GLLRV.DesktopApp.Services;
 using GLLRV.DesktopApp.Models;
-using GLLRV.DesktopApp.Views; // se o namespace da FirstAccessWindow/MainWindow estiver aqui
+using GLLRV.DesktopApp.Services;
 
 namespace GLLRV.DesktopApp.Views
 {
@@ -11,36 +9,41 @@ namespace GLLRV.DesktopApp.Views
         public LoginWindow()
         {
             InitializeComponent();
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             var username = UsernameTextBox.Text.Trim();
-            var senha = PasswordBox.Password;
+            var password = PasswordBox.Password;
 
-            var usuario = Auth.Login(username, senha);
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            {
+                MessageBox.Show("Informe usuário e senha.", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            var usuario = Auth.Login(username, password);
 
             if (usuario == null)
             {
-                MessageBox.Show("Usuário não encontrado ou senha incorreta.",
-                    "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Usuário não encontrado.", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
+            // Primeiro acesso -> trocar senha + frase
             if (usuario.PrimeiroAcesso)
             {
-                var first = new FirstAccessWindow(usuario)
-                {
-                    Owner = this
-                };
+                var first = new FirstAccessWindow(usuario);
                 first.Show();
-                this.Hide();
-                return;
+            }
+            else
+            {
+                var main = new MainWindow(usuario);
+                main.Show();
             }
 
-            var main = new MainWindow(usuario);
-            main.Show();
-            this.Close();
+            Close();
         }
     }
 }
