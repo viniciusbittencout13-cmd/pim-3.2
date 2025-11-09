@@ -6,35 +6,39 @@ namespace GLLRV.DesktopApp.Views
 {
     public partial class FirstAccessWindow : Window
     {
-        private readonly Usuario _user;
+        private readonly Usuario _usuario;
+        private readonly Auth _auth;
 
-        public FirstAccessWindow(Usuario user)
+        public FirstAccessWindow(Usuario usuario, Auth auth)
         {
             InitializeComponent();
-            _user = user;
+            _usuario = usuario;
+            _auth = auth;
         }
 
-        // ESTE NOME TEM QUE BATER COM O Click DO XAML: ConfirmButton_Click
         private void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
-            var frase = SecurityPhraseTextBox.Text?.Trim() ?? "";
-            var senha1 = NewPasswordBox.Password;
-            var senha2 = ConfirmPasswordBox.Password;
+            var frase = SecurityPhraseTextBox.Text.Trim();
+            var novaSenha = NewPasswordBox.Password;
+            var confirma = ConfirmPasswordBox.Password;
 
-            if (string.IsNullOrWhiteSpace(senha1))
+            if (string.IsNullOrWhiteSpace(novaSenha) || novaSenha != confirma)
             {
-                MessageBox.Show("Informe a nova senha.");
+                MessageBox.Show("As senhas não coincidem.", "Erro",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            if (senha1 != senha2)
-            {
-                MessageBox.Show("As senhas não conferem.");
-                return;
-            }
+            _auth.AtualizarPrimeiroAcesso(_usuario, novaSenha, frase);
 
-            _user.Senha = Auth.Sha256Hex(senha1);
-            _user.PrimeiroAcesso = false;
+            MessageBox.Show("Senha e frase de segurança atualizadas.", "Sucesso",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+
+            DialogResult = true;
+            Close();
+        }
+    }
+}            _user.PrimeiroAcesso = false;
             _user.FraseSeguranca = frase;
 
             JsonUserStore.UpdateUser(_user);
