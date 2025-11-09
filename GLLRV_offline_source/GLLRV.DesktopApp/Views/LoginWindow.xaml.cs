@@ -1,6 +1,5 @@
 using System.Windows;
 using GLLRV.DesktopApp.Services;
-using GLLRV.DesktopApp.Views; // se MainWindow e FirstAccessWindow estiverem aqui
 using GLLRV.DesktopApp.Models;
 
 namespace GLLRV.DesktopApp.Views
@@ -26,16 +25,17 @@ namespace GLLRV.DesktopApp.Views
                 return;
             }
 
-            // Se for primeiro acesso, abre tela específica
+            // Se for primeiro acesso, manda pra tela de primeiro acesso
             if (user.PrimeiroAcesso)
             {
-                // Se sua FirstAccessWindow tiver construtor sem parâmetros, use assim:
-                var first = new FirstAccessWindow();
+                // IMPORTANTE: aqui usamos o construtor que recebe Usuario
+                var first = new FirstAccessWindow(user);
                 first.Show();
             }
             else
             {
-                // Ajuste aqui se seu MainWindow espera o usuário no construtor
+                // Ajuste aqui se seu MainWindow aceitar Usuario no construtor.
+                // Se não aceitar, deixe assim mesmo:
                 var main = new MainWindow();
                 main.Show();
             }
