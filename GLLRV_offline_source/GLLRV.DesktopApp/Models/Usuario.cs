@@ -7,5 +7,6 @@ namespace GLLRV.DesktopApp.Models
         public int Nivel { get; set; }
         public string Atribuicoes { get; set; } = "";
         public bool PrimeiroAcesso { get; set; } = true;
+        public string FraseSeguranca { get; set; } = "";
     }
 }
