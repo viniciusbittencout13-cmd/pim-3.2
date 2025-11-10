@@ -16,9 +16,11 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      # 🧹 Passo novo: limpar build antigo
-      - name: Clean build artifacts
-        run: dotnet clean GLLRV_offline_source/GLLRV.DesktopApp/GLLRV.DesktopApp.csproj
+      # 🔥 Passo novo: remover completamente bin/ e obj/
+      - name: Force clean build folders
+        run: |
+          if (Test-Path "GLLRV_offline_source/GLLRV.DesktopApp/bin") { Remove-Item -Recurse -Force "GLLRV_offline_source/GLLRV.DesktopApp/bin" }
+          if (Test-Path "GLLRV_offline_source/GLLRV.DesktopApp/obj") { Remove-Item -Recurse -Force "GLLRV_offline_source/GLLRV.DesktopApp/obj" }
 
       # 🧱 Compilar e publicar novamente
       - name: Publish self-contained offline
