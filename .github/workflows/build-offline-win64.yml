@@ -16,8 +16,13 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      # 🧹 Passo novo: limpar build antigo
+      - name: Clean build artifacts
+        run: dotnet clean GLLRV_offline_source/GLLRV.DesktopApp/GLLRV.DesktopApp.csproj
+
+      # 🧱 Compilar e publicar novamente
       - name: Publish self-contained offline
-        run: dotnet publish GLLRV_offline_source/GLLRV.DesktopApp/GLLRV.DesktopApp.csproj -c Release -r win-x64 -p:PublishSingleFile=true -p:SelfContained=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishReadyToRun=true -o publish/win-x64
+        run: dotnet publish GLLRV_offline_source/GLLRV.DesktopApp/GLLRV.DesktopApp.csproj -c Release -r win-x64 -p:PublishSingleFile=true -p:SelfContained=true -o publish/win-x64
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
