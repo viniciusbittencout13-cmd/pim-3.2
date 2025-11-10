@@ -9,7 +9,6 @@ namespace GLLRV.DesktopApp.Views
     {
         private readonly Usuario _usuario;
 
-        // Construtor chamado após login (com usuário carregado)
         public MainWindow(Usuario usuario)
         {
             InitializeComponent();
@@ -27,7 +26,6 @@ namespace GLLRV.DesktopApp.Views
             AbrirChamadosPendentes();
         }
 
-        // Construtor padrão (fallback)
         public MainWindow()
         {
             InitializeComponent();
