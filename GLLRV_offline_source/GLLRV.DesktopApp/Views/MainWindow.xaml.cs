@@ -27,7 +27,7 @@ namespace GLLRV.DesktopApp.Views
             AbrirChamadosPendentes();
         }
 
-        // Construtor padrão (fallback - se alguém instanciar sem passar usuário)
+        // Construtor padrão (fallback)
         public MainWindow()
         {
             InitializeComponent();
@@ -82,7 +82,6 @@ namespace GLLRV.DesktopApp.Views
 
         private void AbrirChamadosPendentes()
         {
-            // Enquanto não tiver a tela real, mostramos um placeholder
             ContentHost.Content = new System.Windows.Controls.TextBlock
             {
                 Text = "Chamados pendentes (tela em construção)",
