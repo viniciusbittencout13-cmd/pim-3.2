@@ -3,99 +3,142 @@ using System.Windows;
 using System.Windows.Threading;
 using GLLRV.DesktopApp.Models;
 using GLLRV.DesktopApp.Services;
-using GLLRV.DesktopApp.Views.Pages; // vamos criar essas páginas já já
 
 namespace GLLRV.DesktopApp.Views
 {
     public partial class MainWindow : Window
     {
-        private readonly DispatcherTimer _timer = new DispatcherTimer();
+        private readonly Usuario _usuario;
 
-        public MainWindow()
+        public MainWindow(Usuario usuario)
         {
             InitializeComponent();
 
-            CarregarUsuarioLogado();
+            _usuario = usuario;
+
+            CarregarUsuarioNoTopo();
             IniciarRelogio();
             AbrirChamadosPendentes();
         }
 
-        private void CarregarUsuarioLogado()
+        // Caso também exista um construtor sem parâmetros sendo usado em algum lugar
+        public MainWindow()
         {
-            var usuario = Auth.UsuarioLogado; // usa o que já temos do login
+            InitializeComponent();
 
-            if (usuario != null)
+            _usuario = new Usuario
             {
-                UserNameText.Text = usuario.NomeUsuario;
-                UserLevelText.Text = $"TECNICO :  NÍVEL {usuario.Nivel}";
-                UserCategoryText.Text = $"CATEGORIA: {usuario.Atribuicoes}";
+                NomeUsuario = "vinicius",
+                NomeCompleto = "Vinicius Bittencourt",
+                Nivel = "Nível 2",
+                Categoria = "Servidores e Gerenciamento de Rede"
+            };
 
-                InitialsText.Text = ObterIniciais(usuario.NomeUsuario);
-            }
-            else
-            {
-                UserNameText.Text = "-";
-                UserLevelText.Text = "";
-                UserCategoryText.Text = "";
-                InitialsText.Text = "?";
-            }
+            CarregarUsuarioNoTopo();
+            IniciarRelogio();
+            AbrirChamadosPendentes();
         }
 
-        private static string ObterIniciais(string nome)
+        private void CarregarUsuarioNoTopo()
         {
-            if (string.IsNullOrWhiteSpace(nome))
-                return "?";
+            if (_usuario == null) return;
 
-            var partes = nome.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (partes.Length == 1)
-                return partes[0][0].ToString().ToUpper();
+            UserNameText.Text = _usuario.NomeCompleto ?? _usuario.NomeUsuario ?? "-";
+            UserLevelText.Text = $"TÉCNICO: {_usuario.Nivel ?? "-"}";
+            UserCategoryText.Text = $"CATEGORIA: {_usuario.Categoria ?? "-"}";
 
-            return (partes[0][0].ToString() + partes[^1][0]).ToUpper();
+            var nome = _usuario.NomeCompleto ?? _usuario.NomeUsuario ?? "";
+            var partes = nome.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var iniciais = partes.Length >= 2
+                ? $"{partes[0][0]}{partes[1][0]}"
+                : (partes.Length == 1 ? partes[0][0].ToString() : "?");
+
+            InitialsText.Text = iniciais.ToUpper();
         }
 
         private void IniciarRelogio()
         {
-            _timer.Interval = TimeSpan.FromSeconds(1);
-            _timer.Tick += (s, e) =>
+            var timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+            timer.Tick += (_, _) =>
             {
                 DateTimeText.Text = DateTime.Now.ToString("dd/MM/yyyy  HH:mm:ss");
             };
-            _timer.Start();
+            timer.Start();
         }
 
         private void AbrirChamadosPendentes()
         {
-            ContentHost.Content = new ChamadosPendentesPage();
+            // TODO: trocar pelo UserControl correto quando existir
+            ContentHost.Content = new System.Windows.Controls.TextBlock
+            {
+                Text = "Chamados pendentes (placeholder)",
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                FontSize = 18
+            };
         }
 
         private void UsuariosButton_Click(object sender, RoutedEventArgs e)
         {
-            ContentHost.Content = new UsuariosPage();
+            ContentHost.Content = new System.Windows.Controls.TextBlock
+            {
+                Text = "Usuários (placeholder)",
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                FontSize = 18
+            };
         }
 
         private void RelatoriosButton_Click(object sender, RoutedEventArgs e)
         {
-            ContentHost.Content = new RelatoriosPage();
+            ContentHost.Content = new System.Windows.Controls.TextBlock
+            {
+                Text = "Relatórios (placeholder)",
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                FontSize = 18
+            };
         }
 
         private void ChamadosPendentesButton_Click(object sender, RoutedEventArgs e)
         {
-            ContentHost.Content = new ChamadosPendentesPage();
+            AbrirChamadosPendentes();
         }
 
         private void HistoricoChamadosButton_Click(object sender, RoutedEventArgs e)
         {
-            ContentHost.Content = new HistoricoChamadosPage();
+            ContentHost.Content = new System.Windows.Controls.TextBlock
+            {
+                Text = "Histórico de chamados (placeholder)",
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                FontSize = 18
+            };
         }
 
         private void ChamadosAndamentoButton_Click(object sender, RoutedEventArgs e)
         {
-            ContentHost.Content = new ChamadosAndamentoPage();
+            ContentHost.Content = new System.Windows.Controls.TextBlock
+            {
+                Text = "Chamados em andamento (placeholder)",
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                FontSize = 18
+            };
         }
 
         private void ConfiguracaoButton_Click(object sender, RoutedEventArgs e)
         {
-            ContentHost.Content = new ConfiguracoesPage();
+            ContentHost.Content = new System.Windows.Controls.TextBlock
+            {
+                Text = "Configurações (placeholder)",
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                FontSize = 18
+            };
         }
 
         private void SairButton_Click(object sender, RoutedEventArgs e)
