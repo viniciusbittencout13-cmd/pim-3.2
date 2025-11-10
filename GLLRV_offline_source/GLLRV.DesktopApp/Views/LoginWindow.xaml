@@ -146,7 +146,7 @@
                        Foreground="#444"
                        FontSize="13"/>
 
-            <border Content="SAIR"
+            <Button Content="SAIR"
                     Width="120"
                     Height="40"
                     Click="SairButton_Click"
@@ -155,7 +155,7 @@
                     BorderBrush="Transparent"
                     FontWeight="Bold"
                     Cursor="Hand"
-                    CornerRadius="20"/>
+                    Margin="0,0,0,0"/>
         </StackPanel>
 
         <!-- Área do conteúdo (direita, com cartão branco) -->
