@@ -13,6 +13,7 @@
             <ColumnDefinition Width="260" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="60" />
             <RowDefinition Height="*" />
@@ -27,14 +28,13 @@
 
                 <!-- BLOCO DO TÉCNICO -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
-                    <!-- FOTO (placeholder) -->
+                    <!-- FOTO -->
                     <Border Width="56"
                             Height="56"
                             CornerRadius="28"
                             Background="#ffffff33"
                             VerticalAlignment="Center">
-                        <!-- Quando tiver foto, dá pra usar ImageBrush aqui -->
-                        <TextBlock Text="VB"
+                        <TextBlock x:Name="InitialsText"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    Foreground="White"
@@ -43,14 +43,14 @@
 
                     <!-- DADOS DO TÉCNICO -->
                     <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="VINICIUS BITTENCOURT"
+                        <TextBlock x:Name="UserNameText"
                                    Foreground="White"
                                    FontSize="12"
                                    FontWeight="Bold"/>
-                        <TextBlock Text="TÉCNICO: NÍVEL 2"
+                        <TextBlock x:Name="UserLevelText"
                                    Foreground="White"
                                    FontSize="11"/>
-                        <TextBlock Text="CATEGORIA: SERVIDORES / REDE"
+                        <TextBlock x:Name="UserCategoryText"
                                    Foreground="White"
                                    FontSize="11"/>
                     </StackPanel>
@@ -89,30 +89,40 @@
             </StackPanel>
         </Border>
 
-        <!-- BOTÃO SAIR (TOPO DIREITA) -->
-<Button Grid.Row="0"
-        Grid.Column="1"
-        Width="100"
-        Height="36"
-        Margin="0,12,16,12"
-        HorizontalAlignment="Right"
-        VerticalAlignment="Center"
-        Click="SairButton_Click"
-        Background="#E5E5E5"
-        Foreground="#111"
-        BorderThickness="0"
-        FontWeight="Bold"
-        Cursor="Hand">
-    <Button.Template>
-        <ControlTemplate TargetType="Button">
-            <Border Background="{TemplateBinding Background}" CornerRadius="18">
-                <ContentPresenter HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"
-                                  Content="SAIR"/>
-            </Border>
-        </ControlTemplate>
-    </Button.Template>
-</Button>
+        <!-- TOPO DIREITA -->
+        <StackPanel Grid.Row="0"
+                    Grid.Column="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Margin="0,0,22,0">
+            <TextBlock x:Name="DateTimeText"
+                       VerticalAlignment="Center"
+                       Margin="0,0,24,0"
+                       Foreground="#444"
+                       FontSize="13"/>
+
+            <Button Content="SAIR"
+                    Width="100"
+                    Height="36"
+                    Click="SairButton_Click"
+                    Background="#E5E5E5"
+                    Foreground="#111"
+                    BorderThickness="0"
+                    FontWeight="Bold"
+                    Cursor="Hand">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="18">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Content="SAIR"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </StackPanel>
+
         <!-- ÁREA DE CONTEÚDO -->
         <Border Grid.Row="1"
                 Grid.Column="1"
@@ -120,7 +130,7 @@
                 Background="White"
                 CornerRadius="24"
                 Padding="24">
-            <Grid x:Name="ContentArea" />
+            <ContentControl x:Name="ContentHost" />
         </Border>
     </Grid>
 </Window>
